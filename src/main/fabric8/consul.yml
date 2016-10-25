@@ -1,0 +1,6 @@
+---
+apiVersion: apps/v1alpha1
+kind: PetSet
+spec:
+  serviceName: "consul"
+  replicas: 2

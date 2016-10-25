@@ -1,0 +1,47 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>net.ucosty</groupId>
+  <artifactId>consul</artifactId>
+  <version>0.7.0-1</version>
+  <packaging>pom</packaging>
+  <name>Consul</name>
+
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>io.fabric8</groupId>
+        <artifactId>fabric8-maven-plugin</artifactId>
+        <version>3.1-SNAPSHOT</version>
+
+        <configuration>
+          <mode>kubernetes</mode>
+
+          <image>
+            <build>
+              <from>alpine:3.4</from>
+              <maintainer>ucosty@gmail.com</maintainer>
+              <optimise>true</optimise>
+
+              <tags>
+                <tag>${project.version}</tag>
+              </tags>
+            </build>
+          </image>
+        </configuration>
+
+        <executions>
+          <execution>
+            <id>fabric8</id>
+            <goals>
+              <goal>resource</goal>
+              <goal>build</goal>
+            </goals>
+          </execution>
+        </executions>
+
+      </plugin>
+    </plugins>
+  </build>
+</project>
