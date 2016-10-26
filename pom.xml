@@ -38,10 +38,8 @@
                                 <optimise>true</optimise>
 
                                 <ports>
-                                    <port>8600</port>
-                                    <port>8500</port>
-                                    <port>8400</port>
-                                    <port>8300</port>
+                                    <http>8500</http>
+                                    <dns>8600</dns>
                                 </ports>
 
                                 <tags>
@@ -50,6 +48,36 @@
                             </build>
                         </image>
                     </images>
+
+                    <resources>
+                        <services>
+                            <service>
+                                <name>consul</name>
+                                <type>ClusterIP</type>
+                                <ports>
+                                    <http>
+                                        <name>http</name>
+                                        <protocol>tcp</protocol>
+                                        <port>8500</port>
+                                        <targetPort>8500</targetPort>
+                                    </http>
+                                </ports>
+                            </service>
+                            <service>
+                                <name>consul</name>
+                                <type>ClusterIP</type>
+                                <ports>
+                                    <http>
+                                        <name>dns</name>
+                                        <protocol>tcp</protocol>
+                                        <port>8600</port>
+                                        <targetPort>8600</targetPort>
+                                    </http>
+                                </ports>
+                            </service>
+
+                        </services>
+                    </resources>
                 </configuration>
 
                 <executions>
