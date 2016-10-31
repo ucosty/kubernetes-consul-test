@@ -18,6 +18,8 @@
                 <configuration>
                     <mode>kubernetes</mode>
                     <verbose>true</verbose>
+                    <useColor>false</useColor>
+                    <skipBuildPom>false</skipBuildPom>
 
                     <enricher>
                         <excludes>fmp-ianaservice</excludes>
@@ -28,6 +30,23 @@
                         </config>
                     </enricher>
 
+                    <resources>
+                        <liveness>
+                            <initialDelaySeconds>30</initialDelaySeconds>
+                            <timeoutSeconds>3</timeoutSeconds>
+                            <getUrl>HTTP://:8500/v1/status/peers</getUrl>
+                        </liveness>
+
+                        <annotations>
+                            <pod>
+                                <property>
+                                    <name>pod.alpha.kubernetes.io/initialize</name>
+                                    <value>true</value>
+                                </property>
+                            </pod>
+                        </annotations>
+                    </resources>
+
                     <images>
                         <image>
                             <name>consul</name>
@@ -37,6 +56,10 @@
                                 <maintainer>ucosty@gmail.com</maintainer>
                                 <optimise>true</optimise>
 
+                                <env>
+                                    <BOOTSTRAP_EXPECT>3</BOOTSTRAP_EXPECT>
+                                </env>
+
                                 <ports>
                                     <http>8500</http>
                                     <dns>8600</dns>
@@ -45,39 +68,40 @@
                                 <tags>
                                     <tag>${project.version}</tag>
                                 </tags>
+
+                                <workdir>/consul</workdir>
+
+                                <assembly>
+                                    <mode>dir</mode>
+                                    <basedir>/consul</basedir>
+                                    <inline>
+                                        <fileSets>
+                                            <fileSet>
+                                                <directory>${project.basedir}/resources</directory>
+                                                <outputDirectory>.</outputDirectory>
+                                                <includes>
+                                                    <include>/**</include>
+                                                </includes>
+                                            </fileSet>
+                                        </fileSets>
+                                    </inline>
+                                </assembly>
+
+                                <runCmds>
+                                    <run>unzip consul-0.7.0-linux-amd64.zip</run>
+                                    <run>rm -f consul-0.7.0-linux-amd64.zip</run>
+                                    <run>apk add --no-cache net-tools</run>
+                                </runCmds>
+                                
+                                <entryPoint>
+                                    <exec>
+                                        <arg>/consul/entrypoint.sh</arg>
+                                    </exec>
+                                </entryPoint>
+
                             </build>
                         </image>
                     </images>
-
-                    <resources>
-                        <services>
-                            <service>
-                                <name>consul</name>
-                                <type>ClusterIP</type>
-                                <ports>
-                                    <http>
-                                        <name>http</name>
-                                        <protocol>tcp</protocol>
-                                        <port>8500</port>
-                                        <targetPort>8500</targetPort>
-                                    </http>
-                                </ports>
-                            </service>
-                            <service>
-                                <name>consul</name>
-                                <type>ClusterIP</type>
-                                <ports>
-                                    <http>
-                                        <name>dns</name>
-                                        <protocol>tcp</protocol>
-                                        <port>8600</port>
-                                        <targetPort>8600</targetPort>
-                                    </http>
-                                </ports>
-                            </service>
-
-                        </services>
-                    </resources>
                 </configuration>
 
                 <executions>
